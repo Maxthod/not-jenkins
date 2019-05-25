@@ -132,21 +132,22 @@ app.post('/not-jenkins-dev', async function (req, res) {
         Logger.debug("Hello from dev!");
 
 
-        const { 
+        const {
             ref
         } = body;
 
 
-        if(ref.indexOf('develop') > -1) {
+        if (ref.indexOf('develop') > -1) {
             console.log("Going into development");
 
             const refarr = ref.replace("ref/", "").split("/");
             const imageName = refarr.slice(2).join("/");
 
 
+            console.log(await execute("whoami"));
+
             const command = `
                 set -e
-                whoami
                 git clone git@github.com:Maxthod/not-jenkins.git -b develop
                 cd not-jenkins
                 docker build -t ${imageName} .
