@@ -199,6 +199,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
             Logger.debug("Deploy image : %s", commandDeploy);
             await execute(commandDeploy);
             Logger.debug("Deployed.")
+            
 
             const commandCleanup = `
                 rm -rf ~/not-jenkins
