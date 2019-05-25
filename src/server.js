@@ -201,6 +201,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
 
             const commandCleanup = `
                 rm -rf ~/not-jenkins
+                docker rm $(docker container ls -a -q
                 docker image rm $(docker image ls -q)
             `
 
