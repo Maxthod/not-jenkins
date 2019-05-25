@@ -72,7 +72,7 @@ app.post('/not-jenkins', async function (req, res) {
 
 
         if (token !== secretToken) {
-            Logger.debug("Invalid token : Expected %o . Was %o", secretToken, token);
+            Logger.debug("Invalid token : Expected %s . Was %s", secretToken, token);
 
             res.status(401).json({
                 status: 401,
@@ -84,6 +84,8 @@ app.post('/not-jenkins', async function (req, res) {
             await responseSucess(callback_url);
 
             const command = `docker service update --image ${image_name} not_jenkins`
+            Logger.debug("Executing command : %s", command);
+
 
             const result = await execute(command);
 
@@ -105,6 +107,61 @@ app.post('/not-jenkins', async function (req, res) {
 });
 
 
+
+app.post('/not-jenkins-dev', async function (req, res) {
+    try {
+        const {
+            query,
+            body
+        } = req;
+
+        const secretToken = "shoubalou";
+
+        const {
+            token
+        } = query;
+        Logger.debug("request on %s", req.url);
+        Logger.debug("Secret Token is %o", secretToken);
+        Logger.debug("Query token is %o", token);
+
+        Logger.debug("Hello from dev!");
+
+        res.status(200).send();
+        return 
+        if (token !== secretToken) {
+            Logger.debug("Invalid token : Expected %s . Was %s", secretToken, token);
+
+            res.status(401).json({
+                status: 401,
+                code: "Invalid token"
+            });
+        } else {
+            Logger.debug("Valid token!");
+
+            await responseSucess(callback_url);
+
+            const command = `docker service update --image ${image_name} not_jenkins`
+            Logger.debug("Executing command : %s", command);
+
+
+            const result = await execute(command);
+
+            Logger.debug("Result is : %o", result);
+
+            res.json({
+                status: 200,
+            });
+
+
+        }
+
+
+    } catch (err) {
+        Logger.info("Execute command failed! : %o", err);
+        res.status(500).send();
+        responseFailed(callback_url);
+    }
+});
 
 app.post('/thehempathy-backend', async function (req, res) {
     const {
@@ -176,7 +233,7 @@ app.post('/thehempathy-backend', async function (req, res) {
 });
 
 function responseSucess(callback_url) {
-    Logger.debug("Sending response to callback!");
+    Logger.debug("Sending positive response to callback!");
 
     return axios.post(callback_url, {
             "state": "success",
@@ -191,17 +248,19 @@ function responseSucess(callback_url) {
 }
 
 function responseFailed(callback_url) {
-    axios.post(callback_url, {
+    Logger.debug("Sending negative response to callback!");
+
+    return axios.post(callback_url, {
             "state": "failed",
             "description": "No tests were done *THUMBS_UP*",
             "context": "Continuous integration by Not Jenkins!",
         })
         .then((res) => {
-            console.log(`statusCode: ${res.statusCode}`)
-            console.log(res)
+            Logger.debug("Sent successfully!");
         })
         .catch((error) => {
-            console.error(error)
+            Logger.error("Callback call failed! %o", err);
+
         });
 }
 
