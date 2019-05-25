@@ -32,7 +32,7 @@ async function execute(command) {
 
 app.get('/info', async function(req, res) {
 
-    res.send("Hello babe");
+    res.send("Hello my love");
 });
 
 app.post('/not-jenkins', async function (req, res) {
