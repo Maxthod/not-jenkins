@@ -145,7 +145,8 @@ app.post('/not-jenkins-dev', async function (req, res) {
             console.log("Going into development");
 
             const refarr = ref.replace("ref/", "").split("/");
-            const imageName = refarr.slice(2).join("/");
+            // const imageName = refarr.slice(2).join("/");
+            const imageName = "huguesmcd/not-jenkins:latest";
 
 
             console.log(await execute("whoami"));
