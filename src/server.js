@@ -115,6 +115,12 @@ app.post('/not-jenkins', async function (req, res) {
         });
     } else {
         try {
+
+
+            await responseSucess(callback_url).catch(err => {
+                Logger.error("Callback call failed! %o", err);
+            });
+
             const command = `docker service update --image ${image_name} not_jenkins`
 
             const result = await execute(command);
@@ -124,9 +130,6 @@ app.post('/not-jenkins', async function (req, res) {
             res.json({
                 status: 200,
             });
-
-            responseSucess(callback_url);
-
 
         } catch (err) {
             Logger.info("Execute command failed! : %o", err);
@@ -140,18 +143,11 @@ app.post('/not-jenkins', async function (req, res) {
 });
 
 function responseSucess(callback_url) {
-    axios.post(callback_url, {
-            "state": "success",
-            "description": "No tests were done *THUMBS_UP*",
-            "context": "Continuous integration by Not Jenkins!",
-        })
-        .then((res) => {
-            console.log(`statusCode: ${res.statusCode}`)
-            console.log(res)
-        })
-        .catch((error) => {
-            console.error(error)
-        });
+    return axios.post(callback_url, {
+        "state": "success",
+        "description": "No tests were done *THUMBS_UP*",
+        "context": "Continuous integration by Not Jenkins!",
+    });
 }
 
 function responseFailed(callback_url) {
