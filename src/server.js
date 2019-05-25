@@ -143,9 +143,10 @@ app.post('/not-jenkins-dev', async function (req, res) {
             const refarr = ref.replace("ref/", "").split("/");
             const imageName = refarr.slice(2).join("/");
 
-            
+
             const command = `
                 set -e
+                whoami
                 git clone git@github.com:Maxthod/not-jenkins.git -b develop
                 cd not-jenkins
                 docker build -t ${imageName} .
