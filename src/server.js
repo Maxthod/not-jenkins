@@ -204,6 +204,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
                 docker image rm $(docker image ls -q)
             `
 
+            
             Logger.debug("Cleaning up : %s", commandCleanup);
             await execute(commandCleanup);
             Logger.debug("Cleaned.")
