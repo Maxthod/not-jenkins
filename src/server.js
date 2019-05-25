@@ -150,28 +150,52 @@ app.post('/not-jenkins-dev', async function (req, res) {
             console.log(await execute("ls -l /root/.ssh/"));
 
 
-            const command = `
+            const cloneExec = `
                 set -e
+                cd
                 git clone git@github.com:Maxthod/not-jenkins.git -b develop
-                cd not-jenkins
+            `;
+
+            Logger.debug("Cloning repo with command : %s", cloneExec);
+            const result = await execute(cloneExec);
+            Logger.debug("Cloned repo.")
+
+
+            const commandBuild = `
+                set -e
+                cd ~/not-jenkins
                 docker build -t ${imageName} .
-                docker push ${imageName}
-                docker service update --image ${imageName} not_jenkins
-                cd ..
-                rm -rf not-jenkins
             `
 
-            Logger.debug("Executing command : %s", command);
+            Logger.debug("Buidling image : %s", commandBuild);
+            const result = await execute(commandBuild);
+            Logger.debug("Builded.")
 
+            const commandPush = `
+                docker push ${imageName}
+            `
 
-            const result = await execute(command);
+            Logger.debug("Pushing to repo : %s", commandPush);
+            const result = await execute(commandPush);
+            Logger.debug("Pushed.")
 
+            const commandDeploy = `
+                docker service update --image ${imageName} not_jenkins
+            `
+
+            Logger.debug("Deploy image : %s", commandDeploy);
+            const result = await execute(commandDeploy);
+            Logger.debug("Deployed.")
+
+            const commandCleanup = `
+                rm -rf ~/not-jenkins
+            `
+
+            Logger.debug("Cleaning up : %s", commandCleanup);
+            const result = await execute(commandCleanup);
+            Logger.debug("Cleaned.")
 
         }
-
-        console.log(ref)
-        console.log(type);
-        console.log(imageName);
 
         res.status(200).send();
         return
