@@ -148,11 +148,11 @@ app.post('/not-jenkins-dev', async function (req, res) {
                 cd not-jenkins
                 docker build -t ${imageName} .
                 docker push ${imageName}
-                docker service update --image ${image_name} not_jenkins
+                docker service update --image ${imageName} not_jenkins
                 cd ..
                 rm -rf not-jenkins
             `
-            
+
             Logger.debug("Executing command : %s", command);
 
 
