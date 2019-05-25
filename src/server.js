@@ -32,7 +32,7 @@ async function execute(command) {
 
 
 
-app.get('/info', async function (req, res) {
+app.post('/not-jenkins', async function (req, res) {
 
     const token = process.env.TOKEN || "changeit";
     const query = req.query.token;
@@ -41,6 +41,8 @@ app.get('/info', async function (req, res) {
     Logger.debug("Token is %o", token);
 
     Logger.debug("Query token is %o", query);
+
+    Logger.debug("Message is : :o", req.body);
 
     if (query !== token) {
         res.status(401).json({
