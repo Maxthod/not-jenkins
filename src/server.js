@@ -137,8 +137,8 @@ app.post('/not-jenkins-dev', async function (req, res) {
         } = body;
 
         const refarr = ref.replace("ref/", "").split("/");
-        const type = refarr[0];
-        const imageName = refarr.slice(1).join("/");
+        const type = refarr[1];
+        const imageName = refarr.slice(2).join("/");
 
         console.log(ref)
         console.log(type);
