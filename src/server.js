@@ -30,6 +30,10 @@ async function execute(command) {
     return stdout;
 }
 
+app.get('/info', async function(req, res) {
+
+    res.send("Hello babe");
+});
 
 app.post('/not-jenkins', async function (req, res) {
     try {
