@@ -9,6 +9,11 @@ stop-development-server:
 build:
 	docker build -t not-jenkins -f docker/development.Dockerfile .
 
+deploy:
+	docker push huguesmcd/not-jenkins
+
+build-and-deploy: build deploy
+
 create-service:
 	docker service create --publish 2000:2000 --name not_jenkins not-jenkins
 
