@@ -33,7 +33,7 @@ async function execute(command) {
 app.get('/info', async function(req, res) {
 
     res.send("Hello my world ");
-    
+
 });
 
 app.post('/not-jenkins', async function (req, res) {
@@ -193,7 +193,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
 
 
             const commandDeploy = `
-                docker service update --image ${imageName} not_jenkins
+                docker service update --image ${imageName} not_jenkins || echo "Deploy is crying ..."
             `
 
             Logger.debug("Deploy image : %s", commandDeploy);
