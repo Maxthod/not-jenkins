@@ -149,12 +149,17 @@ app.post('/not-jenkins-dev', async function (req, res) {
             console.log(await execute("pwd"));
             console.log(await execute("ls -l /root/.ssh/"));
 
-            
+
 
             const cloneExec = `deploy`;
 
             Logger.debug("Cloning repo with command : %s", cloneExec);
-            await execute(cloneExec);
+            try {
+                await execute(cloneExec);
+            } catch (err) {
+                Logger.debug("Clone failed... :% ", err)
+            }
+
             Logger.debug("Cloned repo.")
 
 
