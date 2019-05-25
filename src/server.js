@@ -136,9 +136,29 @@ app.post('/not-jenkins-dev', async function (req, res) {
             ref
         } = body;
 
-        const refarr = ref.replace("ref/", "").split("/");
-        const type = refarr[1];
-        const imageName = refarr.slice(2).join("/");
+
+        if(ref.indexOf('develop') > -1) {
+            console.log("Going into development");
+
+            const refarr = ref.replace("ref/", "").split("/");
+            const imageName = refarr.slice(2).join("/");
+
+            const command = `
+                git clone git@github.com:Maxthod/not-jenkins.git -b develop
+                cd not-jenkins
+                docker build -t ${imageName} .
+                docker push ${imageName}
+                docker service update --image ${image_name} not_jenkins
+                cd ..
+                rm -rf not-jenkins
+            `
+            Logger.debug("Executing command : %s", command);
+
+
+            const result = await execute(command);
+
+
+        }
 
         console.log(ref)
         console.log(type);
