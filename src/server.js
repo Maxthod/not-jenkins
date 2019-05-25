@@ -56,6 +56,11 @@ app.post('/not-jenkins', async function (req, res) {
         Logger.debug("Query token is %o", token);
 
 
+        const {
+            ref
+        } = req.body;
+
+
 
         const {
             repo_name
@@ -126,8 +131,21 @@ app.post('/not-jenkins-dev', async function (req, res) {
 
         Logger.debug("Hello from dev!");
 
+
+        const { 
+            ref
+        } = body;
+
+        const refarr = ref.replace("ref/", "").split("/");
+        const type = refarr[0];
+        const imageName = refarr.slice(1).join("/");
+
+        console.log(ref)
+        console.log(type);
+        console.log(imageName);
+
         res.status(200).send();
-        return 
+        return
         if (token !== secretToken) {
             Logger.debug("Invalid token : Expected %s . Was %s", secretToken, token);
 
