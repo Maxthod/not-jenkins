@@ -150,12 +150,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
             console.log(await execute("ls -l /root/.ssh/"));
 
 
-            const cloneExec = `
-                set -e
-                cd
-                git clone git@github.com:Maxthod/not-jenkins.git -b develop
-                exit 0
-            `;
+            const cloneExec = `deploy`;
 
             Logger.debug("Cloning repo with command : %s", cloneExec);
             await execute(cloneExec);
