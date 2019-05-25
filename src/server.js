@@ -230,7 +230,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
     } catch (err) {
         Logger.info("Execute command failed! : %o", err);
         res.status(500).send();
-        responseFailed(callback_url);
+        //responseFailed(callback_url);
     }
 });
 
