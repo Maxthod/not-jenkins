@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+const axios = require('axios')
+
 
 require("maxthod-logger").init();
 
@@ -34,15 +36,31 @@ async function execute(command) {
 
 app.post('/not-jenkins', async function (req, res) {
 
-    const token = process.env.TOKEN || "changeit";
-    const query = req.query.token;
+    const {
+        query,
+        body
+    } = req;
+
+
+    const secretToken = process.env.TOKEN || "changeit";
+
+    const {
+        token
+    } = query;
+
+    const {
+        callback_url,
+        push_data,
+        repository
+    } = body;
 
     Logger.debug("request on /info");
-    Logger.debug("Token is %o", token);
+    Logger.debug("Secret Token is %o", secretToken);
 
-    Logger.debug("Query token is %o", query);
+    Logger.debug("Query token is %o", token);
 
     Logger.debug("Message is : :o", req.body);
+
 
     if (query !== token) {
         res.status(401).json({
@@ -52,7 +70,7 @@ app.post('/not-jenkins', async function (req, res) {
     } else {
         try {
             const command = `docker service update --env-add TIME=${Date.now()} not_jenkins`
-            
+
             const result = await execute(command);
 
             Logger.debug("Result is : %o", result);
@@ -60,12 +78,32 @@ app.post('/not-jenkins', async function (req, res) {
                 status: 200,
                 data: result
             });
+
+
+
+            axios.post(callback_url, {
+                    "state": "success",
+                    "description": "No were done *THUMBS_UP*",
+                    "context": "Continuous integration by Not Jenkins!",
+                })
+                .then((res) => {
+                    console.log(`statusCode: ${res.statusCode}`)
+                    console.log(res)
+                })
+                .catch((error) => {
+                    console.error(error)
+                })
+
+
+
+
         } catch (err) {
             Logger.info("Execute command failed! : %o", err);
             res.status(500).send();
         }
 
     }
+
 
 });
 
