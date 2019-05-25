@@ -6,11 +6,27 @@ start-development-server: build stop run logs
 stop-development-server:
 	docker container stop not_jenkins || true
 
-build:
+build-development:
 	docker build -t not-jenkins -f docker/development.Dockerfile .
+
+build-production:
+	docker build -t $(version) .
 
 deploy:
 	docker push huguesmcd/not-jenkins
+
+deploy-prod:
+	docker push huguesmcd/not-jenkins:$(version)
+
+build-and-deploy-production: build-production deploy-production
+
+
+test: test2
+	echo $(TOTO)
+
+
+test2: 
+	echo $(TOTO)
 
 build-and-deploy: build deploy
 
