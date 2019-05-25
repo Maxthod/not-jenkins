@@ -1,14 +1,13 @@
 const express = require("express");
 const app = express();
 const axios = require('axios')
-
-
 require("maxthod-logger").init();
 
+
+app.use(express.bodyParser());
+
+
 const PORT = process.env.PORT || 2000;
-
-
-
 const TIME = process.env.TIME || 'time is not set';
 Logger.info("TIME IS : %s", TIME);
 
