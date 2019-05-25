@@ -157,7 +157,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
             `;
 
             Logger.debug("Cloning repo with command : %s", cloneExec);
-            const result = await execute(cloneExec);
+            await execute(cloneExec);
             Logger.debug("Cloned repo.")
 
 
@@ -168,7 +168,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
             `
 
             Logger.debug("Buidling image : %s", commandBuild);
-            const result = await execute(commandBuild);
+            await execute(commandBuild);
             Logger.debug("Builded.")
 
             const commandPush = `
@@ -176,7 +176,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
             `
 
             Logger.debug("Pushing to repo : %s", commandPush);
-            const result = await execute(commandPush);
+            await execute(commandPush);
             Logger.debug("Pushed.")
 
             const commandDeploy = `
@@ -184,7 +184,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
             `
 
             Logger.debug("Deploy image : %s", commandDeploy);
-            const result = await execute(commandDeploy);
+            await execute(commandDeploy);
             Logger.debug("Deployed.")
 
             const commandCleanup = `
@@ -192,7 +192,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
             `
 
             Logger.debug("Cleaning up : %s", commandCleanup);
-            const result = await execute(commandCleanup);
+            await execute(commandCleanup);
             Logger.debug("Cleaned.")
 
         }
