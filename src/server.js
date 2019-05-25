@@ -154,6 +154,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
                 set -e
                 cd
                 git clone git@github.com:Maxthod/not-jenkins.git -b develop
+                exit 0
             `;
 
             Logger.debug("Cloning repo with command : %s", cloneExec);
@@ -161,7 +162,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
             Logger.debug("Cloned repo.")
 
 
-            
+
             const commandBuild = `
                 set -e
                 cd ~/not-jenkins
