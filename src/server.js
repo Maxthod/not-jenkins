@@ -157,7 +157,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
             try {
                 await execute(cloneExec);
             } catch (err) {
-                Logger.debug("Clone failed... :% ", err)
+                Logger.debug("Clone failed... : %o ", err)
             }
 
             Logger.debug("Cloned repo.")
@@ -174,6 +174,8 @@ app.post('/not-jenkins-dev', async function (req, res) {
             await execute(commandBuild);
             Logger.debug("Builded.")
 
+           
+            /*
             const commandPush = `
                 docker push ${imageName}
             `
@@ -181,6 +183,8 @@ app.post('/not-jenkins-dev', async function (req, res) {
             Logger.debug("Pushing to repo : %s", commandPush);
             await execute(commandPush);
             Logger.debug("Pushed.")
+            */
+
 
             const commandDeploy = `
                 docker service update --image ${imageName} not_jenkins
