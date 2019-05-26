@@ -26,8 +26,10 @@ async function execute(command) {
         } = await execPromisify(command);
 
 
-        Logger.debug("stdout : %s", stdout);
-        Logger.debug("stderr : %s", stderr);
+        Logger.debug(`stdout : 
+        %s`, stdout);
+        Logger.debug(`stderr : 
+        %s`, stderr);
 
         return stdout;
         
@@ -55,7 +57,7 @@ function getImageNameGithub(payload) {
 
 app.get('/info', async function (req, res) {
 
-    res.send("gperokgpoe ");
+    res.send("wouhou ");
 
 });
 
