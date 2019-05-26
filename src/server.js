@@ -55,7 +55,7 @@ function getImageNameGithub(payload) {
 
 app.get('/info', async function (req, res) {
 
-    res.send("yo ");
+    res.send("gperokgpoe ");
 
 });
 
