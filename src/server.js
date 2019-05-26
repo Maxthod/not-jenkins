@@ -30,6 +30,21 @@ async function execute(command) {
     return stdout;
 }
 
+
+function getImageNameDockerhub( payload ) {
+    const repo_name = payload.repository.repo_name;
+
+    const tag = payload.push_data.tag;
+
+    return `${repo_name}:${tag}`;
+}
+
+
+function getImageNameGithub( payload ) {
+    return "huguesmcd/not-jenkins:latest"
+}
+
+
 app.get('/info', async function (req, res) {
 
     res.send("Sans chnanimagan 222289 ");
@@ -75,8 +90,8 @@ app.post('/not-jenkins', async function (req, res) {
             tag
         } = push_data;
 
-        const image_name = `${repo_name}:${tag}`;
-
+        const image_name = getImageNameDockerhub();
+        
 
         Logger.debug("Image name is repo_name is : %s", image_name);
 
@@ -93,18 +108,17 @@ app.post('/not-jenkins', async function (req, res) {
 
             await responseSucess(callback_url);
 
-            const command = `docker service update --image ${image_name} not_jenkins`
-            Logger.debug("Executing command : %s", command);
+           const commandDeploy = `IMAGE_NAME=${imageName} deploy`
 
-
-            const result = await execute(command);
-
-            Logger.debug("Result is : %o", result);
+            Logger.debug("Deploy image : %s", commandDeploy);
+            await execute(commandDeploy).catch(err => {
+                Logger.error("Deploy is crying ... : %o", err);
+            });
+            Logger.debug("Deployed.")
 
             res.json({
                 status: 200,
             });
-
 
         }
 
@@ -147,7 +161,8 @@ app.post('/not-jenkins-dev', async function (req, res) {
 
             const refarr = ref.replace("ref/", "").split("/");
             // const imageName = refarr.slice(2).join("/");
-            const imageName = "huguesmcd/not-jenkins:latest";
+
+            const imageName = getImageNameGithub(body);
 
 
             console.log(await execute("whoami"));
