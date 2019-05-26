@@ -170,6 +170,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
 
             const commandBuild = `IMAGE_NAME=${imageName} build`
 
+            
             Logger.debug("Buidling image : %s", commandBuild);
             await execute(commandBuild);
             Logger.debug("Builded.")
