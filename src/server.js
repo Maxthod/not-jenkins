@@ -157,22 +157,16 @@ app.post('/not-jenkins-dev', async function (req, res) {
 
 
         if (ref.indexOf('develop') > -1) {
-            console.log("Going into development");
-
-            const refarr = ref.replace("ref/", "").split("/");
-            // const imageName = refarr.slice(2).join("/");
+            Logger.debug(`
+            ########################################################################
+            ################ DEPLOYING INTO DEVELOPMENT ENVIRONMENT ################
+            ########################################################################
+            `);
 
             const imageName = getImageNameGithub(body);
 
-
-            console.log(await execute("whoami"));
-            console.log(await execute("cd"));
-            console.log(await execute("pwd"));
-            console.log(await execute("ls -l /root/.ssh/"));
-
-
             // CLONE
-            const cloneExec = `clone`;
+            const cloneExec = `not-jenkins-clone`;
             Logger.debug("Cloning repo... Command is : %s", cloneExec);
             await execute(cloneExec).catch(err => {
                 Logger.debug("Clone failed... : %o ", err)
@@ -180,7 +174,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
             Logger.debug("Cloned.")
 
             // BUILD
-            const commandBuild = `IMAGE_NAME=${imageName} build`
+            const commandBuild = `IMAGE_NAME=${imageName} not-jenkins-build`
             Logger.debug("Buidling image... Command is : %s", commandBuild);
             await execute(commandBuild);
             Logger.debug("Builded.")
@@ -188,14 +182,14 @@ app.post('/not-jenkins-dev', async function (req, res) {
             Logger.debug("Docker Username is : %s", await execute("echo $DOCKER_USER"))
 
             // PUSH
-            const commandPush = `IMAGE_NAME=${imageName} push`
+            const commandPush = `IMAGE_NAME=${imageName} not-jenkins-push`
             Logger.debug("Pushing to repo... Command is : %s", commandPush);
             await execute(commandPush);
             Logger.debug("Pushed.")
 
 
             // DEPLOY
-            const commandDeploy = `IMAGE_NAME=${imageName} deploy`
+            const commandDeploy = `IMAGE_NAME=${imageName} not-jenkins-deploy`
             Logger.debug("Deploy image... Command is : %s", commandDeploy);
             await execute(commandDeploy).catch(err => {
                 Logger.error("Deploy is crying ... : %o", err);
