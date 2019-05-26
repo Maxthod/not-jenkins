@@ -47,7 +47,7 @@ function getImageNameGithub( payload ) {
 
 app.get('/info', async function (req, res) {
 
-    res.send("Je suis not jenkins ");
+    res.send("yo ");
 
 });
 
