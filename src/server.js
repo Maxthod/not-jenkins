@@ -189,7 +189,6 @@ app.post('/not-jenkins-dev', async function (req, res) {
             Logger.debug("Docker Username is : %s", await execute("echo $DOCKER_USER"))
             Logger.debug("Docker Password is : %s", await execute("echo $DOCKER_PASSWORD"))
 
-
             const commandPush = `
                 set -e
                 if [ ! -f ~/.docker/config.json ] || ! grep -q "index.docker.io" ~/.docker/config.json; then 
