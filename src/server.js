@@ -90,7 +90,7 @@ app.post('/not-jenkins', async function (req, res) {
             tag
         } = push_data;
 
-        const image_name = getImageNameDockerhub();
+        const imageName = getImageNameDockerhub();
         
 
         Logger.debug("Image name is repo_name is : %s", image_name);
