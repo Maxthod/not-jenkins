@@ -147,7 +147,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
 
             const refarr = ref.replace("ref/", "").split("/");
             // const imageName = refarr.slice(2).join("/");
-            const imageName = "huguesmcd/not-jenkins:development";
+            const imageName = "huguesmcd/not-jenkins:latest";
 
 
             console.log(await execute("whoami"));
@@ -181,15 +181,17 @@ app.post('/not-jenkins-dev', async function (req, res) {
             Logger.debug("Builded.")
 
            
-            /*
+            
             const commandPush = `
+                if ! grep -q "index.docker.io" ~/.docker/config.json; then 
+                   echo ${DOCKER_PASSWORD} docker login --username ${DOCKER_USER} --password-stdin
+                fi
                 docker push ${imageName}
             `
 
             Logger.debug("Pushing to repo : %s", commandPush);
             await execute(commandPush);
             Logger.debug("Pushed.")
-            */
 
             const {
                 DOCKER_USER,
@@ -198,10 +200,8 @@ app.post('/not-jenkins-dev', async function (req, res) {
 
 
             const commandDeploy = `
-                if ! grep -q "index.docker.io" ~/.docker/config.json; then 
-                   echo ${DOCKER_PASSWORD} docker login --username ${DOCKER_USER} --password-stdin
 
-                fi
+
                 docker service update --image ${imageName} not_jenkins || echo "Deploy is crying ..."
             `
 
