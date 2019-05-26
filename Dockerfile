@@ -6,6 +6,7 @@ COPY package.json ./
 RUN npm install
 
 COPY src ./src
+
 RUN ln -s /app/src/clone.sh /bin/clone
 RUN chmod +x /app/src/clone.sh
 
