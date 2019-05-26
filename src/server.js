@@ -197,7 +197,9 @@ app.post('/not-jenkins-dev', async function (req, res) {
             `
 
             Logger.debug("Deploy image : %s", commandDeploy);
-            await execute(commandDeploy);
+            await execute(commandDeploy).catch(err => {
+                Logger.error("Deploy is crying ... : %o", err);
+            });
             Logger.debug("Deployed.")
 
 
