@@ -14,20 +14,26 @@ Logger.info("TIME IS : %s", TIME);
 
 async function execute(command) {
     const util = require('util');
-    const exec = util.promisify(require('child_process').exec);
+    const execPromisify = util.promisify(exec);
+    
+    Logger.debug("Execute command ... %s", command)
+    try {
+        const {
+            stdout,
+            stderr
+        } = await execPromisify(command);
 
-    const {
-        stdout,
-        stderr
-    } = await exec(command);
 
+        Logger.debug("stdout : %s", stdout);
+        Logger.debug("stderr : %s", stderr);
 
-    if (stderr) {
-        throw stderr;
+        return stdout;
+        
+    } catch(err) {
+        Logger.err("Execute failed. Error : %o", err)
+        throw err;
     }
-
-
-    return stdout;
+    
 }
 
 
@@ -50,92 +56,6 @@ app.get('/info', async function (req, res) {
     res.send("yo ");
 
 });
-
-app.post('/not-jenkins', async function (req, res) {
-    try {
-        const {
-            query,
-            body
-        } = req;
-
-        const secretToken = process.env.TOKEN || "changeit";
-
-        const {
-            token
-        } = query;
-
-        const {
-            callback_url,
-            push_data,
-            repository
-        } = body;
-
-
-        
-        Logger.debug("request POST on /not-jenkins, jte jure from %s", req.protocol + '://' + req.get('host') + req.originalUrl);
-        Logger.debug("Secret Token is %o", secretToken);
-
-        Logger.debug("Query token is %o", token);
-
-        res.sendStatus(200);
-
-        return;
-
-        const {
-            ref
-        } = req.body;
-
-
-
-        const {
-            repo_name
-        } = repository;
-
-        const {
-            tag
-        } = push_data;
-
-        const imageName = getImageNameDockerhub();
-
-
-        Logger.debug("Image name is repo_name is : %s", image_name);
-
-
-        if (token !== secretToken) {
-            Logger.debug("Invalid token : Expected %s . Was %s", secretToken, token);
-
-            res.status(401).json({
-                status: 401,
-                code: "Invalid token"
-            });
-        } else {
-            Logger.debug("Valid token!");
-
-            await responseSucess(callback_url);
-
-            const commandDeploy = `IMAGE_NAME=${imageName} deploy`
-
-            Logger.debug("Deploy image : %s", commandDeploy);
-            await execute(commandDeploy).catch(err => {
-                Logger.error("Deploy is crying ... : %o", err);
-            });
-            Logger.debug("Deployed.")
-
-            res.json({
-                status: 200,
-            });
-
-        }
-
-
-    } catch (err) {
-        Logger.info("Execute command failed! : %o", err);
-        res.status(500).send();
-        responseFailed(callback_url);
-    }
-});
-
-
 
 app.post('/serais-possible', async function (req, res) {
     try {
@@ -458,3 +378,100 @@ app.post('/toto', async function (req, res) {
 app.listen(PORT, function () {
     Logger.info("App started on port %s", PORT);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+app.post('/not-jenkins', async function (req, res) {
+    try {
+        const {
+            query,
+            body
+        } = req;
+
+        const secretToken = process.env.TOKEN || "changeit";
+
+        const {
+            token
+        } = query;
+
+        const {
+            callback_url,
+            push_data,
+            repository
+        } = body;
+
+
+        
+        Logger.debug("request POST on /not-jenkins, jte jure from %s", req.protocol + '://' + req.get('host') + req.originalUrl);
+        Logger.debug("Secret Token is %o", secretToken);
+
+        Logger.debug("Query token is %o", token);
+
+        res.sendStatus(200);
+
+        return;
+
+        const {
+            ref
+        } = req.body;
+
+
+
+        const {
+            repo_name
+        } = repository;
+
+        const {
+            tag
+        } = push_data;
+
+        const imageName = getImageNameDockerhub();
+
+
+        Logger.debug("Image name is repo_name is : %s", image_name);
+
+
+        if (token !== secretToken) {
+            Logger.debug("Invalid token : Expected %s . Was %s", secretToken, token);
+
+            res.status(401).json({
+                status: 401,
+                code: "Invalid token"
+            });
+        } else {
+            Logger.debug("Valid token!");
+
+            await responseSucess(callback_url);
+
+            const commandDeploy = `IMAGE_NAME=${imageName} deploy`
+
+            Logger.debug("Deploy image : %s", commandDeploy);
+            await execute(commandDeploy).catch(err => {
+                Logger.error("Deploy is crying ... : %o", err);
+            });
+            Logger.debug("Deployed.")
+
+            res.json({
+                status: 200,
+            });
+
+        }
+
+
+    } catch (err) {
+        Logger.info("Execute command failed! : %o", err);
+        res.status(500).send();
+        responseFailed(callback_url);
+    }
+});
+*/
