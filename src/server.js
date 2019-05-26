@@ -187,14 +187,15 @@ app.post('/not-jenkins-dev', async function (req, res) {
 
 
             const commandPush = `
-                if ! grep -q "index.docker.io" ~/.docker/config.json; then 
-                   echo ${DOCKER_PASSWORD} docker login --username ${DOCKER_USER} --password-stdin
+                set -e
+                if [ ! -f ~/.docker/config.json ] || ! grep -q "index.docker.io" ~/.docker/config.json; then 
+                   echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USER}
                 fi
                 docker push ${imageName}
             `
 
             Logger.debug("Pushing to repo : %s", commandPush);
-            
+
             await execute(commandPush);
             Logger.debug("Pushed.")
 
