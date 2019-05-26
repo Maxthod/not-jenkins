@@ -32,7 +32,7 @@ async function execute(command) {
 
 app.get('/info', async function(req, res) {
 
-    res.send("Hello my world ");
+    res.send("bitches and hoes ");
 
 });
 
@@ -199,7 +199,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
             Logger.debug("Deploy image : %s", commandDeploy);
             await execute(commandDeploy);
             Logger.debug("Deployed.")
-            
+
 
             const commandCleanup = `
                 rm -rf ~/not-jenkins
