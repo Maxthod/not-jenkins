@@ -157,7 +157,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
 
 
 
-            const cloneExec = `deploy`;
+            const cloneExec = `clone`;
 
             Logger.debug("Cloning repo with command : %s", cloneExec);
             try {
@@ -168,13 +168,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
 
             Logger.debug("Cloned repo.")
 
-
-
-            const commandBuild = `
-                set -e
-                cd ~/not-jenkins
-                docker build -t ${imageName} .
-            `
+            const commandBuild = `IMAGE_NAME=${imageName} build`
 
             Logger.debug("Buidling image : %s", commandBuild);
             await execute(commandBuild);
@@ -189,9 +183,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
             Logger.debug("Docker Username is : %s", await execute("echo $DOCKER_USER"))
             Logger.debug("Docker Password is : %s", await execute("echo $DOCKER_PASSWORD"))
 
-            const commandPush = `
-               
-            `
+            const commandPush = `IMAGE_NAME=${imageName} push`
 
             Logger.debug("Pushing to repo : %s", commandPush);
 
@@ -199,9 +191,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
             Logger.debug("Pushed.")
 
 
-            const commandDeploy = `
-                docker service update --image ${imageName} not_jenkins || echo "Deploy is crying ..."
-            `
+            const commandDeploy = `IMAGE_NAME=${imageName} deploy`
 
             Logger.debug("Deploy image : %s", commandDeploy);
             await execute(commandDeploy).catch(err => {
