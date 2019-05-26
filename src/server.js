@@ -194,6 +194,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
                 docker push ${imageName}
             `
 
+            
             Logger.debug("Pushing to repo : %s", commandPush);
 
             await execute(commandPush);
