@@ -72,7 +72,7 @@ app.post('/not-jenkins', async function (req, res) {
 
 
         
-        Logger.debug("request POST on /not-jenkins, jte jure from %s", req.get('host'));
+        Logger.debug("request POST on /not-jenkins, jte jure from %s", req.protocol + '://' + req.get('host') + req.originalUrl);
         Logger.debug("Secret Token is %o", secretToken);
 
         Logger.debug("Query token is %o", token);
