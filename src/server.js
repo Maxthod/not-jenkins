@@ -191,8 +191,17 @@ app.post('/not-jenkins-dev', async function (req, res) {
             Logger.debug("Pushed.")
             */
 
+            const {
+                DOCKER_USER,
+                DOCKER_PASSWORD
+            } = process.env;
+
 
             const commandDeploy = `
+                if ! grep -q "index.docker.io" ~/.docker/config.json; then 
+                   echo ${DOCKER_PASSWORD} docker login --username ${DOCKER_USER} --password-stdin
+
+                fi
                 docker service update --image ${imageName} not_jenkins || echo "Deploy is crying ..."
             `
 
@@ -357,6 +366,9 @@ function responseFailed(callback_url) {
 
 app.post('/toto', async function (req, res) {
 
+    return res.status(401).send();
+
+
     const {
         query,
         body
@@ -382,6 +394,7 @@ app.post('/toto', async function (req, res) {
     Logger.debug("Query token is %o", token);
 
     Logger.debug("Message is : %o", req.body);
+
 
 
     if (token !== secretToken) {
