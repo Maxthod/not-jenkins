@@ -70,7 +70,7 @@ app.post('/not-jenkins', async function (req, res) {
             repository
         } = body;
 
-        Logger.debug("request on /not-jenkins");
+        Logger.debug("request POST on /not-jenkins");
         Logger.debug("Secret Token is %o", secretToken);
 
         Logger.debug("Query token is %o", token);
@@ -144,7 +144,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
         const {
             token
         } = query;
-        Logger.debug("request on %s", req.url);
+        Logger.debug("request on POST /not-jenkins-dev, url : %s", req.url);
         Logger.debug("Secret Token is %o", secretToken);
         Logger.debug("Query token is %o", token);
 
@@ -277,7 +277,7 @@ app.post('/thehempathy-backend', async function (req, res) {
         tag
     } = push_data;
 
-    Logger.debug("request on /not-jenkins");
+    Logger.debug("request on POST /thehempathy-backend, URL /thehempathy-backend");
     Logger.debug("Secret Token is %o", secretToken);
 
     Logger.debug("Query token is %o", token);
