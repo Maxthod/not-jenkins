@@ -32,7 +32,7 @@ async function execute(command) {
 
 app.get('/info', async function (req, res) {
 
-    res.send("Sans chnanimagan ");
+    res.send("Sans chnanimagan 22222 ");
 
 });
 
