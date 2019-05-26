@@ -185,6 +185,9 @@ app.post('/not-jenkins-dev', async function (req, res) {
                 DOCKER_PASSWORD
             } = process.env;
 
+            await execute("echo $DOCKER_USER");
+            await execute("echo $DOCKER_PASSWORD");
+
 
             const commandPush = `
                 set -e
