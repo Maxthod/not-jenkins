@@ -31,7 +31,7 @@ async function execute(command) {
 }
 
 
-function getImageNameDockerhub( payload ) {
+function getImageNameDockerhub(payload) {
     const repo_name = payload.repository.repo_name;
 
     const tag = payload.push_data.tag;
@@ -40,7 +40,7 @@ function getImageNameDockerhub( payload ) {
 }
 
 
-function getImageNameGithub( payload ) {
+function getImageNameGithub(payload) {
     return "huguesmcd/not-jenkins:latest"
 }
 
@@ -91,7 +91,7 @@ app.post('/not-jenkins', async function (req, res) {
         } = push_data;
 
         const imageName = getImageNameDockerhub();
-        
+
 
         Logger.debug("Image name is repo_name is : %s", image_name);
 
@@ -108,7 +108,7 @@ app.post('/not-jenkins', async function (req, res) {
 
             await responseSucess(callback_url);
 
-           const commandDeploy = `IMAGE_NAME=${imageName} deploy`
+            const commandDeploy = `IMAGE_NAME=${imageName} deploy`
 
             Logger.debug("Deploy image : %s", commandDeploy);
             await execute(commandDeploy).catch(err => {
@@ -171,59 +171,44 @@ app.post('/not-jenkins-dev', async function (req, res) {
             console.log(await execute("ls -l /root/.ssh/"));
 
 
-
+            // CLONE
             const cloneExec = `clone`;
-
-            Logger.debug("Cloning repo with command : %s", cloneExec);
-            try {
-                await execute(cloneExec);
-            } catch (err) {
+            Logger.debug("Cloning repo... Command is : %s", cloneExec);
+            await execute(cloneExec).catch(err => {
                 Logger.debug("Clone failed... : %o ", err)
-            }
+            });
+            Logger.debug("Cloned.")
 
-            Logger.debug("Cloned repo.")
-
+            // BUILD
             const commandBuild = `IMAGE_NAME=${imageName} build`
-
-
-            Logger.debug("Buidling image : %s", commandBuild);
+            Logger.debug("Buidling image... Command is : %s", commandBuild);
             await execute(commandBuild);
             Logger.debug("Builded.")
 
-            const {
-                DOCKER_USER,
-                DOCKER_PASSWORD
-            } = process.env;
-
-            
             Logger.debug("Docker Username is : %s", await execute("echo $DOCKER_USER"))
-            Logger.debug("Docker Password is : %s", await execute("echo $DOCKER_PASSWORD"))
 
+            // PUSH
             const commandPush = `IMAGE_NAME=${imageName} push`
-
-            Logger.debug("Pushing to repo : %s", commandPush);
-
+            Logger.debug("Pushing to repo... Command is : %s", commandPush);
             await execute(commandPush);
             Logger.debug("Pushed.")
 
 
+            // DEPLOY
             const commandDeploy = `IMAGE_NAME=${imageName} deploy`
-
-            Logger.debug("Deploy image : %s", commandDeploy);
+            Logger.debug("Deploy image... Command is : %s", commandDeploy);
             await execute(commandDeploy).catch(err => {
                 Logger.error("Deploy is crying ... : %o", err);
             });
             Logger.debug("Deployed.")
 
-
+            // CLEAN UP
             const commandCleanup = `
                 rm -rf ~/not-jenkins
-                docker rm $(docker container ls -a -q) || echo "We know htere is fails..."
-                docker image rm $(docker image ls -q) || echo "There we go more free space!"
-            `
-
-
-            Logger.debug("Cleaning up : %s", commandCleanup);
+                docker rm $(docker container ls -a -q) || echo "We know about the running container..."
+                docker image rm $(docker image ls -q) || echo "We know about the running container. But we freed space!"
+            `;
+            Logger.debug("Cleaning up... Command is : %s", commandCleanup);
             await execute(commandCleanup);
             Logger.debug("Cleaned.")
 
