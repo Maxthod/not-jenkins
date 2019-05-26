@@ -30,7 +30,7 @@ async function execute(command) {
     return stdout;
 }
 
-app.get('/info', async function(req, res) {
+app.get('/info', async function (req, res) {
 
     res.send("bitches and hoes hoessssss ");
 
@@ -180,8 +180,12 @@ app.post('/not-jenkins-dev', async function (req, res) {
             await execute(commandBuild);
             Logger.debug("Builded.")
 
-           
-            
+            const {
+                DOCKER_USER,
+                DOCKER_PASSWORD
+            } = process.env;
+
+
             const commandPush = `
                 if ! grep -q "index.docker.io" ~/.docker/config.json; then 
                    echo ${DOCKER_PASSWORD} docker login --username ${DOCKER_USER} --password-stdin
@@ -193,15 +197,8 @@ app.post('/not-jenkins-dev', async function (req, res) {
             await execute(commandPush);
             Logger.debug("Pushed.")
 
-            const {
-                DOCKER_USER,
-                DOCKER_PASSWORD
-            } = process.env;
-
 
             const commandDeploy = `
-
-
                 docker service update --image ${imageName} not_jenkins || echo "Deploy is crying ..."
             `
 
@@ -218,7 +215,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
                 docker image rm $(docker image ls -q) || echo "There we go more free space!"
             `
 
-            
+
             Logger.debug("Cleaning up : %s", commandCleanup);
             await execute(commandCleanup);
             Logger.debug("Cleaned.")
