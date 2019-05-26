@@ -132,7 +132,7 @@ app.post('/not-jenkins', async function (req, res) {
 
 
 
-app.post('/not-jenkins-dev', async function (req, res) {
+app.post('/serais-possible', async function (req, res) {
     try {
         const {
             query,
