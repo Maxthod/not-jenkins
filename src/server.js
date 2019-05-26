@@ -163,9 +163,11 @@ app.post('/serais-possible', async function (req, res) {
 
         if (ref.indexOf('develop') > -1) {
             Logger.debug(`
-            ########################################################################
-            ################ DEPLOYING INTO DEVELOPMENT ENVIRONMENT ################
-            ########################################################################
+            ##################################################################################################################################
+            ##################################################################################################################################
+            ############################################# DEPLOYING INTO DEVELOPMENT ENVIRONMENT #############################################
+            ##################################################################################################################################
+            ##################################################################################################################################
             `);
 
             const imageName = getImageNameGithub(body);
@@ -180,7 +182,13 @@ app.post('/serais-possible', async function (req, res) {
 
             // BUILD
             const commandBuild = `IMAGE_NAME=${imageName} not-jenkins-build`
-            Logger.debug("Buidling image... Command is : %s", commandBuild);
+
+            Logger.debug(`
+            #####################################################
+            ############ Buidling image...  ###################
+            ################# %s ##############################
+            #####################################################
+`, commandBuild);
             await execute(commandBuild);
             Logger.debug("Builded.")
 
@@ -188,14 +196,24 @@ app.post('/serais-possible', async function (req, res) {
 
             // PUSH
             const commandPush = `IMAGE_NAME=${imageName} not-jenkins-push`
-            Logger.debug("Pushing to repo... Command is : %s", commandPush);
+            Logger.debug(`
+            #####################################################
+            ############ Pushing to repo...  ###################
+            ################# %s ##############################
+            #####################################################
+            `, commandPush);
             await execute(commandPush);
             Logger.debug("Pushed.")
 
 
             // DEPLOY
             const commandDeploy = `IMAGE_NAME=${imageName} not-jenkins-deploy`
-            Logger.debug("Deploy image... Command is : %s", commandDeploy);
+            Logger.debug(`
+            #####################################################
+            ############ Deploy image...  ###################
+            ################# %s ##############################
+            #####################################################
+            `, commandDeploy);
             await execute(commandDeploy).catch(err => {
                 Logger.error("Deploy is crying ... : %o", err);
             });
@@ -207,7 +225,12 @@ app.post('/serais-possible', async function (req, res) {
                 docker rm $(docker container ls -a -q) || echo "We know about the running container..."
                 docker image rm $(docker image ls -q) || echo "We know about the running container. But we freed space!"
             `;
-            Logger.debug("Cleaning up... Command is : %s", commandCleanup);
+            Logger.debug(`
+            #####################################################
+            ############ Cleaning up...  ###################
+            ################# %s ##############################
+            #####################################################
+            `, commandCleanup);
             await execute(commandCleanup);
             Logger.debug("Cleaned.")
 
