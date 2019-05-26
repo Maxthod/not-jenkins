@@ -57,7 +57,7 @@ function getImageNameGithub(payload) {
 
 app.get('/info', async function (req, res) {
 
-    res.send("wouhou ");
+    res.send("Bouhou ");
 
 });
 
