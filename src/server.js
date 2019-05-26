@@ -31,6 +31,26 @@ async function execute(command) {
 }
 
 
+function getImageNameDockerhub( payload ) {
+    const repo_name = payload.repository.repo_name;
+
+    const tag = payload.push_data.tag;
+
+    return `${repo_name}:${tag}`;
+}
+
+
+function getImageNameGithub( payload ) {
+    return "huguesmcd/not-jenkins:latest"
+}
+
+
+app.get('/info', async function (req, res) {
+
+    res.send("Sans chnanimagan 222289 ");
+
+});
+
 app.post('/not-jenkins', async function (req, res) {
     try {
         const {
@@ -56,6 +76,11 @@ app.post('/not-jenkins', async function (req, res) {
         Logger.debug("Query token is %o", token);
 
 
+        const {
+            ref
+        } = req.body;
+
+
 
         const {
             repo_name
@@ -65,8 +90,8 @@ app.post('/not-jenkins', async function (req, res) {
             tag
         } = push_data;
 
-        const image_name = `${repo_name}:${tag}`;
-
+        const image_name = getImageNameDockerhub();
+        
 
         Logger.debug("Image name is repo_name is : %s", image_name);
 
@@ -83,18 +108,17 @@ app.post('/not-jenkins', async function (req, res) {
 
             await responseSucess(callback_url);
 
-            const command = `docker service update --image ${image_name} not_jenkins`
-            Logger.debug("Executing command : %s", command);
+           const commandDeploy = `IMAGE_NAME=${imageName} deploy`
 
-
-            const result = await execute(command);
-
-            Logger.debug("Result is : %o", result);
+            Logger.debug("Deploy image : %s", commandDeploy);
+            await execute(commandDeploy).catch(err => {
+                Logger.error("Deploy is crying ... : %o", err);
+            });
+            Logger.debug("Deployed.")
 
             res.json({
                 status: 200,
             });
-
 
         }
 
@@ -126,8 +150,87 @@ app.post('/not-jenkins-dev', async function (req, res) {
 
         Logger.debug("Hello from dev!");
 
+
+        const {
+            ref
+        } = body;
+
+
+        if (ref.indexOf('develop') > -1) {
+            console.log("Going into development");
+
+            const refarr = ref.replace("ref/", "").split("/");
+            // const imageName = refarr.slice(2).join("/");
+
+            const imageName = getImageNameGithub(body);
+
+
+            console.log(await execute("whoami"));
+            console.log(await execute("cd"));
+            console.log(await execute("pwd"));
+            console.log(await execute("ls -l /root/.ssh/"));
+
+
+
+            const cloneExec = `clone`;
+
+            Logger.debug("Cloning repo with command : %s", cloneExec);
+            try {
+                await execute(cloneExec);
+            } catch (err) {
+                Logger.debug("Clone failed... : %o ", err)
+            }
+
+            Logger.debug("Cloned repo.")
+
+            const commandBuild = `IMAGE_NAME=${imageName} build`
+
+
+            Logger.debug("Buidling image : %s", commandBuild);
+            await execute(commandBuild);
+            Logger.debug("Builded.")
+
+            const {
+                DOCKER_USER,
+                DOCKER_PASSWORD
+            } = process.env;
+
+            
+            Logger.debug("Docker Username is : %s", await execute("echo $DOCKER_USER"))
+            Logger.debug("Docker Password is : %s", await execute("echo $DOCKER_PASSWORD"))
+
+            const commandPush = `IMAGE_NAME=${imageName} push`
+
+            Logger.debug("Pushing to repo : %s", commandPush);
+
+            await execute(commandPush);
+            Logger.debug("Pushed.")
+
+
+            const commandDeploy = `IMAGE_NAME=${imageName} deploy`
+
+            Logger.debug("Deploy image : %s", commandDeploy);
+            await execute(commandDeploy).catch(err => {
+                Logger.error("Deploy is crying ... : %o", err);
+            });
+            Logger.debug("Deployed.")
+
+
+            const commandCleanup = `
+                rm -rf ~/not-jenkins
+                docker rm $(docker container ls -a -q) || echo "We know htere is fails..."
+                docker image rm $(docker image ls -q) || echo "There we go more free space!"
+            `
+
+
+            Logger.debug("Cleaning up : %s", commandCleanup);
+            await execute(commandCleanup);
+            Logger.debug("Cleaned.")
+
+        }
+
         res.status(200).send();
-        return 
+        return
         if (token !== secretToken) {
             Logger.debug("Invalid token : Expected %s . Was %s", secretToken, token);
 
@@ -157,9 +260,9 @@ app.post('/not-jenkins-dev', async function (req, res) {
 
 
     } catch (err) {
-        Logger.info("Execute command failed! : %o", err);
+        Logger.error("Execute command failed! : %o", err);
         res.status(500).send();
-        responseFailed(callback_url);
+        //responseFailed(callback_url);
     }
 });
 
@@ -267,6 +370,9 @@ function responseFailed(callback_url) {
 
 app.post('/toto', async function (req, res) {
 
+    return res.status(401).send();
+
+
     const {
         query,
         body
@@ -292,6 +398,7 @@ app.post('/toto', async function (req, res) {
     Logger.debug("Query token is %o", token);
 
     Logger.debug("Message is : %o", req.body);
+
 
 
     if (token !== secretToken) {
