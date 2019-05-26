@@ -194,6 +194,7 @@ app.post('/not-jenkins-dev', async function (req, res) {
             `
 
             Logger.debug("Pushing to repo : %s", commandPush);
+            
             await execute(commandPush);
             Logger.debug("Pushed.")
 
