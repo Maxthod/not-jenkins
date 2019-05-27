@@ -1,4 +1,4 @@
 #!/bin/bash
 set -e
-cd ~/not-jenkins
+cd ~/"$WORKDDIR"
 docker build -t "$IMAGE_NAME" .

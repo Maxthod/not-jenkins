@@ -1,5 +1,5 @@
 #!/bin/sh
 set -e
 cd
-rm -rf not-jenkins
-git clone git@github.com:Maxthod/not-jenkins.git -b develop
+rm -rf "$WORKDDIR"
+git clone "$REPO_URL" -b develop "$WORKDDIR"
