@@ -82,7 +82,7 @@ describe("GitHub hooks", () => {
                     let expected = `REPO_URL="git@github.com:thehempathy/tiny.git" WORKDDIR="thehempathy_tiny" not-jenkins-clone`
                     assert.equal(methodStubbed.getCall(0).args[0], expected, "Param in execute wrong");
 
-                    expected = `IMAGE_NAME=thehempathy-tiny:latest WORKDDIR=thehempathy_tiny  not-jenkins-build`;
+                    expected = `IMAGE_NAME=thehempathy-tiny:latest WORKDDIR=thehempathy_tiny not-jenkins-build`;
                     assert.equal(methodStubbed.getCall(1).args[0], expected, "Param in execute wrong");
 
 

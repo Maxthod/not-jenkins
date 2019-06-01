@@ -13,7 +13,7 @@ const execute = require("../../main/utils/execute")
 const {
     payload,
     header
-} = require("../datas/github-not-jenkins-push-event");
+} = require("../datas/github-the-hempathy-backend-express-push-event");
 
 const githubUtil = require("../../main/utils/github");
 
@@ -30,7 +30,7 @@ describe("GitHub hooks", () => {
     })
 
 
-    describe("POST /not-jenkins", () => {
+    describe("POST /the-hempathy/backend-express", () => {
         it("should call execute with right variable", (done) => {
 
             sinon.spy(githubUtil, "isReqFromGithub");
@@ -38,7 +38,7 @@ describe("GitHub hooks", () => {
             sinon.spy(githubUtil, "isCommitFromBranch");
 
             const request = chai.request(app)
-                .post('/not-jenkins');
+                .post('/the-hempathy/backend-express');
 
             Object.keys(header).forEach(key => {
                 request.set(key, header[key]);
@@ -51,19 +51,17 @@ describe("GitHub hooks", () => {
 
                     assert.equal(methodStubbed.callCount, 4, "expect execute to be called 4 times, clone, build, deploy, cleanup");
 
-                    let expected = `REPO_URL="git@github.com:Maxthod/not-jenkins.git" WORKDDIR="thehempathy_not_jenkins" not-jenkins-clone`
+                    let expected = `REPO_URL="git@github.com:thehempathy/backend-express.git" WORKDDIR="thehempathy_backend_express" not-jenkins-clone`
                     assert.equal(methodStubbed.getCall(0).args[0], expected, "Param in execute wrong");
 
-                    expected = `IMAGE_NAME=thehempathy-not-jenkins:latest WORKDDIR=thehempathy_not_jenkins not-jenkins-build`;
+                    expected = `IMAGE_NAME=thehempathy-backend-express:latest WORKDDIR=thehempathy_backend_express not-jenkins-build`;
                     assert.equal(methodStubbed.getCall(1).args[0], expected, "Param in execute wrong");
 
-
-                    expected = `IMAGE_NAME=thehempathy-not-jenkins:latest SERVICE_NAME=not_jenkins not-jenkins-deploy`
+                    expected = `IMAGE_NAME=thehempathy-backend-express:latest SERVICE_NAME=thehempathy_backend_express not-jenkins-deploy`
                     assert.equal(methodStubbed.getCall(2).args[0], expected, "Param in execute wrong");
 
-                    expected = `WORKDDIR="thehempathy_not_jenkins" not-jenkins-cleanup`
+                    expected = `WORKDDIR="thehempathy_backend_express" not-jenkins-cleanup`
                     assert.equal(methodStubbed.getCall(3).args[0], expected, "Param in execute wrong");
-
 
 
                     done();

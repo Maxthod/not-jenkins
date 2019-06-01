@@ -4,7 +4,7 @@ const execute = require("../utils/execute");
 async function build(imageName, WORKDDIR) {
     try {
         Logger.debug("Building ... ")
-        const commandBuild = `IMAGE_NAME=${imageName} WORKDDIR=${WORKDDIR}  not-jenkins-build`
+        const commandBuild = `IMAGE_NAME=${imageName} WORKDDIR=${WORKDDIR} not-jenkins-build`
         Logger.debug(`
 #####################################################
 ############ Building image...  ###################

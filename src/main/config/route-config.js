@@ -8,6 +8,7 @@ const express = require('express');
     routeConfig.init = function (app) {
 
         // *** register routes *** //
+        app.use('/the-hempathy', require('../controllers/TheHempathyController.js'));
         app.use('/not-jenkins', require('../controllers/NotJenkinsController.js'));
         app.use('/test', require('../controllers/TestController.js'));
         app.use('/time', require('../controllers/TimeController.js'));
