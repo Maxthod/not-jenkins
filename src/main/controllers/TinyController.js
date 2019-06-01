@@ -8,7 +8,7 @@ const SCM = require("../utils/SCM");
 
 router.route('/')
     .get(async function (req, res, next) {
-        res.send("uh oh!");
+        res.send("oh hi oh!");
     })
     .post(async function (req, res, next) {
         Logger.silly(`

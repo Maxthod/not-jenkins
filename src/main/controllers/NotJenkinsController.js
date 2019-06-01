@@ -18,10 +18,10 @@ router.route('/')
             const options = {
                 scm: SCM.GITHUB,
                 source_branch: "develop",
-                workdir: "thehempathy_not_jenkins",
+                workdir: process.env.THE_HEMPATHY_NOT_JENKINS_IMAGE_NAME || "thehempathy_not_jenkins",
                 image_name: process.env.THE_HEMPATHY_NOT_JENKINS_IMAGE_NAME || "thehempathy-not-jenkins:latest",
-                service_name: "thehempathy_not_jenkins",
-                secret: process.env.THEHEMPATHY_NOT_JENKINS_GITHUB_SECRET || "changeme"
+                service_name: process.env.THE_HEMPATHY_NOT_JENKINS_SERVICE_NAME || "not_jenkins",
+                secret: process.env.THE_HEMPATHY_NOT_JENKINS_GITHUB_SECRET || "changeme"
             }
 
             GitHubUtil.startDeploy(req, options);
