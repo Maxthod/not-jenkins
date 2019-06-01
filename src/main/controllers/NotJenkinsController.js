@@ -24,7 +24,7 @@ router.route('/')
                 secret: process.env.THEHEMPATHY_NOT_JENKINS_GITHUB_SECRET || "changeme"
             }
 
-            await GitHubUtil.startDeploy(req, options);
+            GitHubUtil.startDeploy(req, options);
 
             res.json({
                 status: 200,

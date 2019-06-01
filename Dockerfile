@@ -7,6 +7,6 @@ RUN npm install
 
 COPY src ./src
 
-RUN for FILE in /app/src/scripts/* ; do chmod +x $FILE; FILENAME=$(basename $FILE); ln -s $FILE /bin/not-jenkins-${FILENAME%.sh}; done  
+RUN for FILE in /app/src/main/scripts/* ; do chmod +x $FILE; FILENAME=$(basename $FILE); ln -s $FILE /bin/not-jenkins-${FILENAME%.sh}; done  
 
 ENTRYPOINT [ "npm", "start" ]

@@ -8,7 +8,7 @@ const SCM = require("../utils/SCM");
 
 router.route('/')
     .get(async function (req, res, next) {
-        res.send("Hello wolrd!");
+        res.send("uh oh!");
     })
     .post(async function (req, res, next) {
         Logger.silly(`
@@ -105,7 +105,7 @@ router.route('/')
             }
 
 
-            await GitHubUtil.startDeploy(req, options);
+            GitHubUtil.startDeploy(req, options);
             /*
                         await BuildService.build(req, options)
                             .catch(function (err) {
