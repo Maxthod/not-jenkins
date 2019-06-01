@@ -8,6 +8,7 @@ const express = require('express');
     routeConfig.init = function (app) {
 
         // *** register routes *** //
+        app.use('/not-jenkins', require('../controllers/NotJenkinsController.js'));
         app.use('/test', require('../controllers/TestController.js'));
         app.use('/time', require('../controllers/TimeController.js'));
         app.use('/tiny', require('../controllers/TinyController.js'));

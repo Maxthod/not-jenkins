@@ -17,6 +17,7 @@ try {
 } catch (err) {
 	Logger.error("Initialization failed.")
 	Logger.error(err);
+	throw err;
 }
 
 module.exports = app;

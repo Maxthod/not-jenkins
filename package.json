@@ -6,6 +6,7 @@
     "start": "node src/main/server.js",
     "develop": "LOG_LEVEL=debug nodemon src/main/server.js",
     "testIntegration": "mocha src/tests/integrations/*-test.js --exit",
+    "testIntegration2": "PORT=300 mocha src/tests/integrations/*-test.js --exit",
     "test": "mocha src/tests/*.js --exit"
   },
   "author": "",

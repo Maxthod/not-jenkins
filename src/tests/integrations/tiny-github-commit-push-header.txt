@@ -1,1 +1,0 @@
-{"connection":"upgrade","host":"not-jenkins.thehempathy.com","content-length":"7089","accept":"*/*","user-agent":"GitHub-Hookshot/0a2cefb","x-github-event":"push","x-github-delivery":"6b1dab56-820d-11e9-8173-fa1daf1c6ddb","content-type":"application/json","x-hub-signature":"sha1=6b33e86531bcbabeee72c1c0a488654beeb2fd15"}

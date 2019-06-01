@@ -14,24 +14,27 @@ const execute = require("../../main/utils/execute")
 const {
     payload,
     header
-} = require("./tiny-github-commit-push-event");
+} = require("../datas/github-tiny-push-event");
 
 const githubUtil = require("../../main/utils/github");
 //const jest = require("jest");
 //const executeMock = jest.genMockFromModule('../main/utils/execute.js');
 
 
-let methodStubbed = null;
-beforeEach(function () {
-    sinon.stub(execute, "exec");
-    methodStubbed = execute.exec;
-})
-
-afterEach(function () {
-    sinon.restore()
-})
-
 describe("GitHub hooks", () => {
+
+    let methodStubbed = null;
+    beforeEach(function () {
+        sinon.stub(execute, "exec");
+        methodStubbed = execute.exec;
+    })
+
+    afterEach(function () {
+        sinon.restore()
+    })
+
+
+
     describe("POST /tiny", () => {
 
         it.skip("should return time variable!", (done) => {
@@ -71,7 +74,7 @@ describe("GitHub hooks", () => {
                 .end((err, res) => {
 
 
-//                    assert.equal(payload, githubUtil.isReqFromGithub.getCall(0).args[0], "GitHub event is not equals");
+                    //                    assert.equal(payload, githubUtil.isReqFromGithub.getCall(0).args[0], "GitHub event is not equals");
 
 
                     assert.equal(methodStubbed.callCount, 4, "expect execute to be called 4 times, clone, build, deploy, cleanup");
