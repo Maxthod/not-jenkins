@@ -17,7 +17,7 @@ const {
 
 const githubUtil = require("../../main/utils/github");
 
-describe("GitHub hooks", () => {
+describe("THE HEMPATHY BACKEND GITHUB HOOKS", () => {
 
     let methodStubbed = null;
     beforeEach(function () {
@@ -30,7 +30,7 @@ describe("GitHub hooks", () => {
     })
 
 
-    describe("POST /the-hempathy/backend-express", () => {
+    describe("BACKEND-EXPRESS : POST /the-hempathy/backend-express", () => {
         it("should call execute with right variable", (done) => {
 
             sinon.spy(githubUtil, "isReqFromGithub");

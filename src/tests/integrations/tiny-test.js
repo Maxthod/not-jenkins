@@ -11,17 +11,12 @@ const assert = chai.assert;
 const sinon = require("sinon");
 const execute = require("../../main/utils/execute")
 
-const {
-    payload,
-    header
-} = require("../datas/github-tiny-push-event");
-
 const githubUtil = require("../../main/utils/github");
 //const jest = require("jest");
 //const executeMock = jest.genMockFromModule('../main/utils/execute.js');
 
 
-describe("GitHub hooks", () => {
+describe("TINY", () => {
 
     let methodStubbed = null;
     beforeEach(function () {
@@ -35,7 +30,7 @@ describe("GitHub hooks", () => {
 
 
 
-    describe("POST /tiny", () => {
+    describe("TINE : POST /tiny", () => {
 
         it.skip("should return time variable!", (done) => {
             chai.request(app)
@@ -53,7 +48,12 @@ describe("GitHub hooks", () => {
                 });
         });
 
-        it("should call execute with right variable", (done) => {
+        it("should handle develop push event", (done) => {
+
+            const {
+                payload,
+                header
+            } = require("../datas/github-tiny-push-event-develop-branch");
 
             sinon.spy(githubUtil, "isReqFromGithub");
             sinon.spy(githubUtil, "validGithubSecret");
@@ -98,6 +98,59 @@ describe("GitHub hooks", () => {
                     done();
                 });
         });
+
+
+        it("should handle release branch push event", (done) => {
+
+            const {
+                payload,
+                header
+            } = require("../datas/github-tiny-push-event-release-branch");
+
+            sinon.spy(githubUtil, "isReqFromGithub");
+            sinon.spy(githubUtil, "validGithubSecret");
+            sinon.spy(githubUtil, "isCommitFromBranch");
+
+            const request = chai.request(app)
+                .post('/tiny');
+
+            Object.keys(header).forEach(key => {
+                request.set(key, header[key]);
+            });
+
+
+            //   .set('Content-Type', 'application/json')
+            //   .set('user-agent', githubEvent.header['user-agent'])
+            //   .set('x-hub-signature', githubEvent.header['x-hub-signature'])
+            request.send(JSON.stringify(payload))
+                .end((err, res) => {
+
+
+                    //                    assert.equal(payload, githubUtil.isReqFromGithub.getCall(0).args[0], "GitHub event is not equals");
+
+
+                    assert.equal(methodStubbed.callCount, 4, "expect execute to be called 4 times, clone, build, deploy, cleanup");
+
+                    let expected = `REPO_URL="git@github.com:thehempathy/tiny.git" WORKDDIR="thehempathy_tiny" not-jenkins-clone`
+                    assert.equal(methodStubbed.getCall(0).args[0], expected, "Param in execute wrong");
+
+                    expected = `IMAGE_NAME=thehempathy-tiny:latest WORKDDIR=thehempathy_tiny not-jenkins-build`;
+                    assert.equal(methodStubbed.getCall(1).args[0], expected, "Param in execute wrong");
+
+
+                    expected = `IMAGE_NAME=thehempathy-tiny:latest SERVICE_NAME=thehempathy_tiny not-jenkins-deploy`
+                    assert.equal(methodStubbed.getCall(2).args[0], expected, "Param in execute wrong");
+
+                    expected = `WORKDDIR="thehempathy_tiny" not-jenkins-cleanup`
+                    assert.equal(methodStubbed.getCall(3).args[0], expected, "Param in execute wrong");
+
+
+                    res.should.have.status(200);
+
+                    done();
+                });
+        });
+
 
         return;
 

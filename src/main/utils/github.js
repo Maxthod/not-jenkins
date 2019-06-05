@@ -30,6 +30,7 @@ const Utils = {
     },
     decodeGitHub: function (payload) {
         return {
+            branch_name: payload.ref.split("/").slice(2),
             ssh_url: payload.repository.ssh_url
         }
     },
@@ -39,7 +40,15 @@ const Utils = {
         }
         return req.body.ref.indexOf(branchname) > -1;
     },
+
     startDeploy: async function (req, options) {
+
+        Logger.debug("Options for deploy are :")
+        Object.keys(options).forEach(key => {
+            Logger.debug(`${key} : ${options[key]}`)
+        });
+
+
         const {
             scm,
         } = options || {};
@@ -84,12 +93,6 @@ async function deployFromGithub(req, options) {
                     code: "Invalid token"
                 };
             } else {
-
-                const {
-                    body
-                } = req;
-
-
                 if (!Utils.isCommitFromBranch(req, source_branch)) {
 
                     Logger.debug("Request is not for push event on branch develop. Ignoring.");
@@ -103,18 +106,8 @@ async function deployFromGithub(req, options) {
                 ##################################################################################################################################
                 `);
 
-                    const {
-                        ssh_url
-                    } = Utils.decodeGitHub(body);
-
-                    await CloneService.clone(ssh_url, workdir);
-
-                    await BuildService.build(image_name, workdir);
-
-                    await DeployService.deploy(image_name, service_name);
-
-                    await CleanupService.clean(workdir);    
-
+                    options.ssh_url = Utils.decodeGitHub(req.body).ssh_url;
+                    return pipeline(options);
                 }
 
             }
@@ -127,6 +120,32 @@ async function deployFromGithub(req, options) {
         throw err;
     }
 
+}
+
+
+async function pipeline(options) {
+
+    Logger.info("Starting pipeline.")
+
+    const {
+        workdir = "tmp_build",
+            image_name,
+            service_name,
+            ssh_url
+    } = options || {};
+
+    try {
+        await CloneService.clone(ssh_url, workdir);
+
+        await BuildService.build(image_name, workdir);
+
+        await DeployService.deploy(image_name, service_name);
+
+        await CleanupService.clean(workdir);
+
+    } catch (err) {
+        Logger.error("Pipeline failed. Error : %o", err)
+    }
 }
 
 module.exports = Utils;
