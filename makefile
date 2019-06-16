@@ -10,7 +10,7 @@ build-development:
 	docker build -t not-jenkins -f docker/development.Dockerfile .
 
 build-production:
-	docker build -t $(version) .
+	docker build -t $(version) -f docker/production.Dockerfile .
 
 deploy:
 	docker push huguesmcd/not-jenkins

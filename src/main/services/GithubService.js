@@ -1,19 +1,13 @@
 const Utils = require("../utils/github");
 const BuildPipeline = require("./BuildPipeline")
-
+const DeployPipeline = require("./DeployPipeline")
 
 async function constructOptions(req, options) {
     const {
-        branch_name,
         ssh_url
     } = Utils.decodeGitHub(req.body);
 
-
-    switch (branch_name) {
-        case "develop":
-            options.version = "latest"
-        default:
-    }
+    options.ssh_url = ssh_url;
 
     return options;
 }
@@ -31,17 +25,18 @@ async function validateGithubSecret(req, secret) {
 module.exports = {
     start: async function (req, options) {
         try {
-            const sourceBranch = Utils.getBranchFromReq(req);
+            const payload = req.body;
+            const sourceBranch = Utils.getBranchFromPayload(payload);
 
             switch (sourceBranch) {
                 case "develop":
-                    pipelineOptions.version = "latest";
+                    options.version = "latest";
                     break;
                 case "release":
-                    pipelineOptions.version = Utils.getReleaseVersion(req);
+                    options.version = Utils.getReleaseVersion(payload);
                     break;
                 case "master":
-                    pipelineOptions.version = Utils.getTagVersion(req);
+                    options.version = Utils.getTagVersion(payload);
                     break;
                 default:
                     return {
@@ -51,7 +46,7 @@ module.exports = {
 
             await validateGithubSecret(req, options.secret).catch(err => {
                 return {
-                    code: invalid_token,
+                    code: "invalid_token",
                     message: "Invalid Secret"
                 }
             });
@@ -61,6 +56,10 @@ module.exports = {
 
             await BuildPipeline.start(pipelineOptions);
             await DeployPipeline.start(pipelineOptions);
+
+            return {
+                code: "success"
+            }
 
         } catch (err) {
             Logger.error("Github pipeline failed!")

@@ -1,12 +1,12 @@
 const express = require('express'),
     router = express.Router();
 
+const BaseController = require("./BaseController")
 
 const GitHubUtil = require("../utils/github");
-const SCM = require("../utils/SCM");
 
 router.route('/')
-    .post(async function (req, res) {
+    .post(async function (req, res, next) {
         Logger.silly(`
     ##################################################################################################################################
     ##################################################################################################################################
@@ -16,14 +16,15 @@ router.route('/')
     `);
         try {
             const options = {
-                scm: SCM.GITHUB,
-                source_branch: "develop",
-                workdir: process.env.THE_HEMPATHY_NOT_JENKINS_IMAGE_NAME || "thehempathy_not_jenkins",
-                image_name: process.env.THE_HEMPATHY_NOT_JENKINS_IMAGE_NAME || "thehempathy-not-jenkins:latest",
+                image_name: process.env.THE_HEMPATHY_NOT_JENKINS_IMAGE_NAME || "thehempathy-not-jenkins",
+                image_version: "latest",
                 service_name: process.env.THE_HEMPATHY_NOT_JENKINS_SERVICE_NAME || "not_jenkins",
                 secret: process.env.THE_HEMPATHY_NOT_JENKINS_GITHUB_SECRET || "changeme"
             }
+            const result = await BaseController.processRequest(req, options)
+            result.endRequest(result, res)
 
+            return
             GitHubUtil.startDeploy(req, options);
 
             res.json({

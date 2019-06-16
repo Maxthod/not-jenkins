@@ -9,9 +9,7 @@ Logger.info("TIME IS : %s", TIME);
 
 router.route('/')
     .get(async function (req, res, next) {
-        execute.exec("12345");
-        console.log("PASSING BYYYYYY");
-        res.send(TIME);
+        res.send(TIME + "toto") ;
     });
 
 

@@ -1,5 +1,6 @@
 const SCM = require("./SCM");
 
+const Helper = require("./Helper");
 const crypto = require("crypto");
 
 const CloneService = require("../services/CloneService")
@@ -18,21 +19,38 @@ const Utils = {
         if (!Utils.isReqFromGithub(req)) {
             return false;
         }
-
-        // Compare their hmac signature to our hmac signature
-        // (hmac = hash-based message authentication code)
-        const theirSignature = req.headers['x-hub-signature'];
-        const payload = JSON.stringify(req.body);
-        const secret = webhook_secret;
-        const ourSignature = `sha1=${crypto.createHmac('sha1', secret).update(payload).digest('hex')}`;
-
-        return crypto.timingSafeEqual(Buffer.from(theirSignature), Buffer.from(ourSignature));
+        return Helper.validPostSecret(req, webhook_secret);
     },
     decodeGitHub: function (payload) {
         return {
             branch_name: payload.ref.split("/").slice(2),
             ssh_url: payload.repository.ssh_url
         }
+    },
+    getBranchFromPayload: function (payload) {
+        const {
+            ref
+        } = payload;
+        if (ref.indexOf("master") > -1)
+            return "master";
+        else if (ref.indexOf("develop") > -1)
+            return "develop";
+        else if (ref.indexOf("release") > -1) return "release"
+        else return false
+    },
+    getReleaseVersion: function (payload) {
+        const {
+            ref
+        } = payload;
+
+
+
+        const regex = /^release-v([0-9.]+)$/
+        const result = regex.exec(ref);
+
+        console.log("OIEWJFOWIEJFOWIEJOIEWJFOWIEJFWOEIFJWEOIJFWEOIFJ")
+        console.log(result);
+        return result;
     },
     isCommitFromBranch: function (req, branchname) {
         if (!req || !req.body) {
@@ -78,7 +96,7 @@ async function deployFromGithub(req, options) {
 
 
         if (!Utils.isReqFromGithub(req)) {
-            Logger.err("Invalid github request!");
+            Logger.error("Invalid github request!");
             throw {
                 status: 400,
                 code: "invalid_github_request"

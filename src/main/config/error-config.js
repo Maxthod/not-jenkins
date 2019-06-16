@@ -1,13 +1,13 @@
-(function(errorConfig) {
+(function (errorConfig) {
 
     'use strict';
 
     // *** error handling *** //
 
-    errorConfig.init = function(app) {
+    errorConfig.init = function (app) {
 
         // catch 404 and forward to error handler
-        app.use(function(req, res, next) {
+        app.use(function (req, res, next) {
 
             const err = new Error('Not Found');
             err.status = 404;
@@ -16,11 +16,11 @@
 
         // development error handler (will print stacktrace)
         if (app.get('env') === 'development') {
-            app.use(function(err, req, res, next) {
-
-                console.log(`==== ERROR ${err.status || 500} ====`);
-                console.log(err);
-                res.status(err.status || 500).send({
+            app.use(function (err, req, res, next) {
+                const status = err.status || 500;
+                Logger.error(`==== ERROR ${status} ====`);
+                Logger.error("%o", err);
+                res.status(status).send({
                     message: err.message,
                     error: err.error,
                     sqlMessage: err.sqlMessage,
@@ -30,7 +30,7 @@
             });
         } else {
             // production error handler (no stacktraces leaked to user)
-            app.use(function(err, req, res, next) {
+            app.use(function (err, req, res, next) {
                 console.log("We got problem in production");
 
                 res.status(err.status || 500).send({
@@ -42,4 +42,3 @@
     };
 
 })(module.exports);
-

@@ -1,11 +1,7 @@
 const express = require('express'),
     router = express.Router();
 
-const BuildService = require('../services/BuildService');
-const GitHubUtil = require("../utils/github");
-const BuildPipeline = require("../services/BuildPipeline")
-
-const SCM = require("../utils/SCM");
+const BaseController = new require("./BaseController")
 
 router.route('/')
     .get(async function (req, res, next) {
@@ -20,9 +16,7 @@ router.route('/')
     ##################################################################################################################################
     `);
 
-
         try {
-            let result = null;
             const options = {
                 image_name: process.env.THE_HEMPATHY_TINY_IMAGE_NAME || "thehempathy-tiny",
                 image_version: "latest",
@@ -30,42 +24,16 @@ router.route('/')
                 secret: process.env.THEHEMPATHY_TINY_GITHUB_SECRET || "changeme"
             }
 
-
-            if (GitHubUtil.isReqFromGithub(req)) {
-                options.scm = SCM.GITHUB;
-                result = await GitHubService.start(req, options)
-            } else if ("isReqFromDockerHub" === false) {} else {
-                return next({
-                    status: 401,
-                    error: "unhandle_request"
-                })
-            }
-            switch (result.code) {
-                case "source_branch_unhandle":
-                    res.sendStatus(200);
-                    break;
-                case "invalid_token":
-                    next({
-                        status: 401,
-                        code: "invalid_token"
-                    });
-                    break;
-                default:
-                    res.json({
-                        status: 200,
-                        message: "Deploy with success!"
-                    })
-            }
-
-
+            const result = await BaseController.processRequest(req, options)
+            result.endRequest(result, res)
 
         } catch (err) {
-            Logger.error("Failed to deploy /tiny. Error : %o", err);
+            Logger.error("Failed to process request.");
             next({
                 status: 400,
+                err: err
             })
         }
-
 
         return;
 
